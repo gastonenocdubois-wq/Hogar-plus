@@ -1,7 +1,6 @@
 let personas = JSON.parse(localStorage.getItem("personas")) || [];
 let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
 
-
 const listaPersonas = document.getElementById("listaPersonas");
 const listaTareas = document.getElementById("listaTareas");
 
@@ -39,18 +38,17 @@ document.getElementById("nuevaTarea").onclick = function(){
         return;
     }
 
-
     let nombre = prompt("Nombre de la tarea:");
 
     if(nombre){
 
         let opciones = personas
-            .map((p,i)=> `${i+1}. ${p.nombre}`)
-            .join("\n");
+        .map((p,i)=> `${i+1}. ${p.nombre}`)
+        .join("\n");
 
 
         let elegir = prompt(
-            "¿A quién asignar?\n\n" + opciones
+            "Asignar a:\n\n" + opciones
         );
 
 
@@ -61,21 +59,20 @@ document.getElementById("nuevaTarea").onclick = function(){
 
             tareas.push({
                 id: Date.now(),
-                nombre: nombre,
-                persona: persona.nombre,
-                color: persona.color,
+                nombre:nombre,
+                persona:persona.nombre,
+                color:persona.color,
                 hecha:false
             });
 
 
             guardar();
             mostrarTareas();
-
         }
-
     }
 
 };
+
 
 
 function mostrarPersonas(){
@@ -88,11 +85,17 @@ function mostrarPersonas(){
         listaPersonas.innerHTML += `
 
         <div class="item persona">
+
             <div class="color"
             style="background:${p.color}">
             </div>
 
-            ${p.nombre}
+            <b>${p.nombre}</b>
+
+            <button onclick="eliminarPersona(${p.id})">
+            🗑
+            </button>
+
         </div>
 
         `;
@@ -110,6 +113,7 @@ function mostrarTareas(){
 
     tareas.forEach(t=>{
 
+
         listaTareas.innerHTML += `
 
         <div class="item"
@@ -119,14 +123,20 @@ function mostrarTareas(){
 
             👤 ${t.persona}<br>
 
-            Estado:
             ${t.hecha ? "✅ Hecha":"⏳ Pendiente"}
 
             <br><br>
 
+
             <button onclick="completar(${t.id})">
             Cambiar estado
             </button>
+
+
+            <button onclick="eliminarTarea(${t.id})">
+            🗑 Eliminar
+            </button>
+
 
         </div>
 
@@ -155,12 +165,43 @@ function completar(id){
 
 
 
+function eliminarTarea(id){
+
+    if(confirm("¿Eliminar esta tarea?")){
+
+        tareas = tareas.filter(t=>t.id!==id);
+
+        guardar();
+        mostrarTareas();
+
+    }
+
+}
+
+
+
+function eliminarPersona(id){
+
+    if(confirm("¿Eliminar esta persona?")){
+
+        personas = personas.filter(p=>p.id!==id);
+
+        guardar();
+        mostrarPersonas();
+
+    }
+
+}
+
+
+
 function guardar(){
 
     localStorage.setItem(
         "personas",
         JSON.stringify(personas)
     );
+
 
     localStorage.setItem(
         "tareas",
@@ -173,19 +214,3 @@ function guardar(){
 
 mostrarPersonas();
 mostrarTareas();
-
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", function(){
-
-        navigator.serviceWorker.register("sw.js")
-        .then(function(){
-            console.log("Hogar+ listo como aplicación");
-        })
-        .catch(function(error){
-            console.log("Error:", error);
-        });
-
-    });
-
-}
