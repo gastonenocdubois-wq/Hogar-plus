@@ -1,10 +1,12 @@
 let personas = JSON.parse(localStorage.getItem("personas")) || [];
 let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
 let mesActual = localStorage.getItem("mesActual") || obtenerMes();
+let historial = JSON.parse(localStorage.getItem("historial")) || [];
 
 const listaPersonas = document.getElementById("listaPersonas");
 const listaTareas = document.getElementById("listaTareas");
 const mostrarMes = document.getElementById("mesActual");
+const mostrarHistorial = document.getElementById("historial");
 
 
 // CREAR PERSONA
