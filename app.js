@@ -5,13 +5,13 @@ const listaPersonas = document.getElementById("listaPersonas");
 const listaTareas = document.getElementById("listaTareas");
 
 
-document.getElementById("nuevaPersona").onclick = function() {
+document.getElementById("nuevaPersona").onclick = function(){
 
     let nombre = prompt("Nombre de la persona:");
 
     if(nombre){
 
-        let colores = [
+        let colores=[
             "#e74c3c",
             "#3498db",
             "#2ecc71",
@@ -20,9 +20,9 @@ document.getElementById("nuevaPersona").onclick = function() {
         ];
 
         personas.push({
-            id: Date.now(),
-            nombre: nombre,
-            color: colores[personas.length % colores.length]
+            id:Date.now(),
+            nombre:nombre,
+            color:colores[personas.length % colores.length]
         });
 
         guardar();
@@ -31,44 +31,44 @@ document.getElementById("nuevaPersona").onclick = function() {
 };
 
 
-document.getElementById("nuevaTarea").onclick = function(){
 
-    if(personas.length === 0){
+document.getElementById("nuevaTarea").onclick=function(){
+
+    if(personas.length===0){
         alert("Primero agrega personas");
         return;
     }
 
-    let nombre = prompt("Nombre de la tarea:");
 
-    if(nombre){
+    let nombre=prompt("Nombre de la tarea:");
 
-        let opciones = personas
-        .map((p,i)=> `${i+1}. ${p.nombre}`)
-        .join("\n");
-
-
-        let elegir = prompt(
-            "Asignar a:\n\n" + opciones
-        );
+    let lista=personas
+    .map((p,i)=>`${i+1}. ${p.nombre}`)
+    .join("\n");
 
 
-        let persona = personas[elegir-1];
+    let elegido=prompt("Asignar a:\n\n"+lista);
 
 
-        if(persona){
-
-            tareas.push({
-                id: Date.now(),
-                nombre:nombre,
-                persona:persona.nombre,
-                color:persona.color,
-                hecha:false
-            });
+    let persona=personas[elegido-1];
 
 
-            guardar();
-            mostrarTareas();
-        }
+    if(nombre && persona){
+
+        tareas.push({
+
+            id:Date.now(),
+            nombre:nombre,
+            persona:persona.nombre,
+            color:persona.color,
+            hecha:false
+
+        });
+
+
+        guardar();
+        mostrarTareas();
+
     }
 
 };
@@ -82,19 +82,23 @@ function mostrarPersonas(){
 
     personas.forEach(p=>{
 
-        listaPersonas.innerHTML += `
+        listaPersonas.innerHTML+=`
 
         <div class="item persona">
 
-            <div class="color"
-            style="background:${p.color}">
-            </div>
+        <div class="color"
+        style="background:${p.color}">
+        </div>
 
-            <b>${p.nombre}</b>
+        <b>${p.nombre}</b>
 
-            <button onclick="eliminarPersona(${p.id})">
-            🗑
-            </button>
+        <button onclick="editarPersona(${p.id})">
+        ✏️
+        </button>
+
+        <button onclick="eliminarPersona(${p.id})">
+        🗑
+        </button>
 
         </div>
 
@@ -113,29 +117,33 @@ function mostrarTareas(){
 
     tareas.forEach(t=>{
 
-
-        listaTareas.innerHTML += `
+        listaTareas.innerHTML+=`
 
         <div class="item"
         style="border-left:8px solid ${t.color}">
 
-            <b>${t.nombre}</b><br>
+        <b>${t.nombre}</b><br>
 
-            👤 ${t.persona}<br>
+        👤 ${t.persona}<br>
 
-            ${t.hecha ? "✅ Hecha":"⏳ Pendiente"}
+        ${t.hecha ? "✅ Hecha":"⏳ Pendiente"}
 
-            <br><br>
-
-
-            <button onclick="completar(${t.id})">
-            Cambiar estado
-            </button>
+        <br><br>
 
 
-            <button onclick="eliminarTarea(${t.id})">
-            🗑 Eliminar
-            </button>
+        <button onclick="editarTarea(${t.id})">
+        ✏️ Editar
+        </button>
+
+
+        <button onclick="completar(${t.id})">
+        Cambiar estado
+        </button>
+
+
+        <button onclick="eliminarTarea(${t.id})">
+        🗑
+        </button>
 
 
         </div>
@@ -148,13 +156,54 @@ function mostrarTareas(){
 
 
 
-function completar(id){
+function editarPersona(id){
 
-    let tarea = tareas.find(t=>t.id===id);
+    let persona=personas.find(p=>p.id===id);
 
-    if(tarea){
+    let nuevo=prompt(
+        "Nuevo nombre:",
+        persona.nombre
+    );
 
-        tarea.hecha = !tarea.hecha;
+
+    if(nuevo){
+
+        persona.nombre=nuevo;
+
+
+        tareas.forEach(t=>{
+
+            if(t.persona===persona.nombre){
+                t.persona=nuevo;
+            }
+
+        });
+
+
+        guardar();
+        mostrarPersonas();
+        mostrarTareas();
+
+    }
+
+}
+
+
+
+function editarTarea(id){
+
+    let tarea=tareas.find(t=>t.id===id);
+
+
+    let nuevo=prompt(
+        "Nuevo nombre de tarea:",
+        tarea.nombre
+    );
+
+
+    if(nuevo){
+
+        tarea.nombre=nuevo;
 
         guardar();
         mostrarTareas();
@@ -165,16 +214,14 @@ function completar(id){
 
 
 
-function eliminarTarea(id){
+function completar(id){
 
-    if(confirm("¿Eliminar esta tarea?")){
+    let tarea=tareas.find(t=>t.id===id);
 
-        tareas = tareas.filter(t=>t.id!==id);
+    tarea.hecha=!tarea.hecha;
 
-        guardar();
-        mostrarTareas();
-
-    }
+    guardar();
+    mostrarTareas();
 
 }
 
@@ -182,9 +229,9 @@ function eliminarTarea(id){
 
 function eliminarPersona(id){
 
-    if(confirm("¿Eliminar esta persona?")){
+    if(confirm("¿Eliminar persona?")){
 
-        personas = personas.filter(p=>p.id!==id);
+        personas=personas.filter(p=>p.id!==id);
 
         guardar();
         mostrarPersonas();
@@ -195,18 +242,33 @@ function eliminarPersona(id){
 
 
 
+function eliminarTarea(id){
+
+    if(confirm("¿Eliminar tarea?")){
+
+        tareas=tareas.filter(t=>t.id!==id);
+
+        guardar();
+        mostrarTareas();
+
+    }
+
+}
+
+
+
 function guardar(){
 
-    localStorage.setItem(
-        "personas",
-        JSON.stringify(personas)
-    );
+localStorage.setItem(
+"personas",
+JSON.stringify(personas)
+);
 
 
-    localStorage.setItem(
-        "tareas",
-        JSON.stringify(tareas)
-    );
+localStorage.setItem(
+"tareas",
+JSON.stringify(tareas)
+);
 
 }
 
