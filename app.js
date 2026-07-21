@@ -420,6 +420,13 @@ document.getElementById("nuevoMes").onclick = function(){
 
 
     if(confirmar){
+        historial.push({
+
+            mes: mesActual,
+
+            tareas: tareas
+
+        });
 
 
         mesActual = obtenerMesSiguiente();
