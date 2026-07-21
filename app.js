@@ -173,3 +173,19 @@ function guardar(){
 
 mostrarPersonas();
 mostrarTareas();
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", function(){
+
+        navigator.serviceWorker.register("sw.js")
+        .then(function(){
+            console.log("Hogar+ listo como aplicación");
+        })
+        .catch(function(error){
+            console.log("Error:", error);
+        });
+
+    });
+
+}
