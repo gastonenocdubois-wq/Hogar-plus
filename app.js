@@ -1,8 +1,10 @@
 let personas = JSON.parse(localStorage.getItem("personas")) || [];
 let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+let mesActual = localStorage.getItem("mesActual") || obtenerMes();
 
 const listaPersonas = document.getElementById("listaPersonas");
 const listaTareas = document.getElementById("listaTareas");
+const mostrarMes = document.getElementById("mesActual");
 
 
 document.getElementById("nuevaPersona").onclick = function(){
@@ -54,7 +56,14 @@ document.getElementById("nuevaTarea").onclick=function(){
 
 
     if(nombre && persona){
+        mesActual = obtenerMesSiguiente(mesActual);
 
+            localStorage.setItem(
+            "mesActual",
+            mesActual
+     );
+
+    actualizarMes();
         tareas.push({
 
             id:Date.now(),
@@ -272,7 +281,31 @@ JSON.stringify(tareas)
 
 }
 
+actualizarMes();
 
+
+function obtenerMes(){
+
+    let fecha = new Date();
+
+    return fecha.toLocaleDateString("es-ES", {
+        month:"long",
+        year:"numeric"
+    });
+
+}
+
+
+function actualizarMes(){
+
+    if(mostrarMes){
+
+        mostrarMes.innerHTML =
+        "📅 Mes actual: " + mesActual;
+
+    }
+
+}
 
 mostrarPersonas();
 mostrarTareas();
