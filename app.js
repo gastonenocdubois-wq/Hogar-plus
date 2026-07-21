@@ -479,7 +479,51 @@ document.getElementById("nuevoMes").onclick = function(){
 
 };
 
+// MOSTRAR HISTORIAL
 
+function verHistorial(){
+
+    if(historial.length === 0){
+
+        alert("Todavía no hay meses guardados");
+
+        return;
+
+    }
+
+
+    mostrarHistorial.innerHTML = "";
+
+
+    historial.forEach(h=>{
+
+
+        mostrarHistorial.innerHTML += `
+
+        <div class="item">
+
+            <b>📅 ${h.mes}</b>
+
+            <br><br>
+
+            ${h.tareas.map(t=>`
+
+                • ${t.nombre}
+                - 👤 ${t.persona}
+                ${t.hecha ? "✅" : "⏳"}
+
+                <br>
+
+            `).join("")}
+
+        </div>
+
+        `;
+
+
+    });
+
+}
 
 // INICIO
 
@@ -489,7 +533,11 @@ mostrarPersonas();
 
 mostrarTareas();
 
+document.getElementById("verHistorial").onclick = function(){
 
+    verHistorial();
+
+};
 
 // INSTALAR COMO APP
 
