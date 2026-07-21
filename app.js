@@ -181,3 +181,316 @@ function mostrarTareas(){
     });
 
 }
+// EDITAR PERSONA
+
+function editarPersona(id){
+
+    let persona = personas.find(p=>p.id===id);
+
+    let nuevo = prompt(
+        "Nuevo nombre:",
+        persona.nombre
+    );
+
+
+    if(nuevo){
+
+        let nombreAnterior = persona.nombre;
+
+        persona.nombre = nuevo;
+
+
+        tareas.forEach(t=>{
+
+            if(t.persona === nombreAnterior){
+
+                t.persona = nuevo;
+
+            }
+
+        });
+
+
+        guardar();
+
+        mostrarPersonas();
+
+        mostrarTareas();
+
+    }
+
+}
+
+
+
+// EDITAR TAREA
+
+function editarTarea(id){
+
+    let tarea = tareas.find(t=>t.id===id);
+
+
+    let nuevo = prompt(
+        "Nuevo nombre de tarea:",
+        tarea.nombre
+    );
+
+
+    if(nuevo){
+
+        tarea.nombre = nuevo;
+
+
+        guardar();
+
+        mostrarTareas();
+
+    }
+
+}
+
+
+
+// CAMBIAR ESTADO
+
+function completar(id){
+
+    let tarea = tareas.find(t=>t.id===id);
+
+
+    if(tarea){
+
+        tarea.hecha = !tarea.hecha;
+
+
+        guardar();
+
+        mostrarTareas();
+
+    }
+
+}
+
+
+
+// ELIMINAR PERSONA
+
+function eliminarPersona(id){
+
+    if(confirm("¿Eliminar persona?")){
+
+
+        personas = personas.filter(
+            p=>p.id!==id
+        );
+
+
+        guardar();
+
+        mostrarPersonas();
+
+    }
+
+}
+
+
+
+// ELIMINAR TAREA
+
+function eliminarTarea(id){
+
+    if(confirm("¿Eliminar tarea?")){
+
+
+        tareas = tareas.filter(
+            t=>t.id!==id
+        );
+
+
+        guardar();
+
+        mostrarTareas();
+
+    }
+
+}
+
+
+
+// GUARDAR DATOS
+
+function guardar(){
+
+    localStorage.setItem(
+        "personas",
+        JSON.stringify(personas)
+    );
+
+
+    localStorage.setItem(
+        "tareas",
+        JSON.stringify(tareas)
+    );
+
+
+    localStorage.setItem(
+        "mesActual",
+        mesActual
+    );
+
+}
+
+
+
+// MES ACTUAL
+
+function obtenerMes(){
+
+    let fecha = new Date();
+
+
+    return fecha.toLocaleDateString(
+        "es-ES",
+        {
+            month:"long",
+            year:"numeric"
+        }
+    );
+
+}
+
+
+
+function actualizarMes(){
+
+    if(mostrarMes){
+
+        mostrarMes.innerHTML =
+        "📅 Mes actual: " + mesActual;
+
+    }
+
+}
+
+
+
+function obtenerMesSiguiente(){
+
+    let fecha = new Date();
+
+
+    fecha.setMonth(
+        fecha.getMonth()+1
+    );
+
+
+    return fecha.toLocaleDateString(
+        "es-ES",
+        {
+            month:"long",
+            year:"numeric"
+        }
+    );
+
+}
+
+
+
+// NUEVO MES
+
+document.getElementById("nuevoMes").onclick = function(){
+
+
+    if(tareas.length === 0){
+
+        alert("No hay tareas para copiar");
+
+        return;
+
+    }
+
+
+
+    let confirmar = confirm(
+        "¿Crear nuevo mes?\n\nLas tareas pasarán nuevamente a pendientes."
+    );
+
+
+
+    if(confirmar){
+
+
+        mesActual = obtenerMesSiguiente();
+
+
+
+        tareas = tareas.map(t=>{
+
+
+            return {
+
+                id: Date.now() + Math.random(),
+
+                nombre:t.nombre,
+
+                persona:t.persona,
+
+                color:t.color,
+
+                hecha:false
+
+            };
+
+
+        });
+
+
+
+        guardar();
+
+
+        actualizarMes();
+
+
+        mostrarTareas();
+
+
+
+        alert(
+            "Nuevo mes creado correctamente"
+        );
+
+
+    }
+
+
+};
+
+
+
+// INICIO
+
+actualizarMes();
+
+mostrarPersonas();
+
+mostrarTareas();
+
+
+
+// INSTALAR COMO APP
+
+if("serviceWorker" in navigator){
+
+    window.addEventListener(
+        "load",
+        function(){
+
+            navigator.serviceWorker
+            .register("sw.js");
+
+        }
+
+    );
+
+}
