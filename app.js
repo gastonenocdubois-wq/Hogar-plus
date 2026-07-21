@@ -276,3 +276,46 @@ JSON.stringify(tareas)
 
 mostrarPersonas();
 mostrarTareas();
+document.getElementById("nuevoMes").onclick = function(){
+
+    if(tareas.length === 0){
+        alert("No hay tareas para copiar");
+        return;
+    }
+
+
+    let confirmar = confirm(
+        "¿Crear nuevo mes?\n\nLas tareas actuales se copiarán como pendientes."
+    );
+
+
+    if(confirmar){
+
+        tareas = tareas.map(t=>{
+
+            return {
+
+                id: Date.now() + Math.random(),
+
+                nombre:t.nombre,
+
+                persona:t.persona,
+
+                color:t.color,
+
+                hecha:false
+
+            };
+
+        });
+
+
+        guardar();
+        mostrarTareas();
+
+
+        alert("Nuevo mes creado correctamente");
+
+    }
+
+};
