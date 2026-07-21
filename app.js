@@ -7,13 +7,15 @@ const listaTareas = document.getElementById("listaTareas");
 const mostrarMes = document.getElementById("mesActual");
 
 
+// CREAR PERSONA
+
 document.getElementById("nuevaPersona").onclick = function(){
 
     let nombre = prompt("Nombre de la persona:");
 
     if(nombre){
 
-        let colores=[
+        let colores = [
             "#e74c3c",
             "#3498db",
             "#2ecc71",
@@ -22,60 +24,65 @@ document.getElementById("nuevaPersona").onclick = function(){
         ];
 
         personas.push({
-            id:Date.now(),
-            nombre:nombre,
-            color:colores[personas.length % colores.length]
+            id: Date.now(),
+            nombre: nombre,
+            color: colores[personas.length % colores.length]
         });
 
         guardar();
         mostrarPersonas();
     }
+
 };
 
 
 
-document.getElementById("nuevaTarea").onclick=function(){
+// CREAR TAREA
 
-    if(personas.length===0){
+document.getElementById("nuevaTarea").onclick = function(){
+
+    if(personas.length === 0){
+
         alert("Primero agrega personas");
         return;
+
     }
 
 
-    let nombre=prompt("Nombre de la tarea:");
+    let nombre = prompt("Nombre de la tarea:");
 
-    let lista=personas
+    let lista = personas
     .map((p,i)=>`${i+1}. ${p.nombre}`)
     .join("\n");
 
 
-    let elegido=prompt("Asignar a:\n\n"+lista);
+    let elegido = prompt(
+        "Asignar a:\n\n" + lista
+    );
 
 
-    let persona=personas[elegido-1];
+    let persona = personas[elegido-1];
 
 
     if(nombre && persona){
-        mesActual = obtenerMesSiguiente(mesActual);
 
-            localStorage.setItem(
-            "mesActual",
-            mesActual
-     );
-
-    actualizarMes();
         tareas.push({
 
-            id:Date.now(),
-            nombre:nombre,
-            persona:persona.nombre,
-            color:persona.color,
+            id: Date.now(),
+
+            nombre: nombre,
+
+            persona: persona.nombre,
+
+            color: persona.color,
+
             hecha:false
 
         });
 
 
         guardar();
+
         mostrarTareas();
 
     }
@@ -84,30 +91,36 @@ document.getElementById("nuevaTarea").onclick=function(){
 
 
 
+// MOSTRAR PERSONAS
+
 function mostrarPersonas(){
 
-    listaPersonas.innerHTML="";
+    listaPersonas.innerHTML = "";
 
 
     personas.forEach(p=>{
 
-        listaPersonas.innerHTML+=`
+        listaPersonas.innerHTML += `
 
         <div class="item persona">
 
-        <div class="color"
-        style="background:${p.color}">
-        </div>
+            <div class="color"
+            style="background:${p.color}">
+            </div>
 
-        <b>${p.nombre}</b>
 
-        <button onclick="editarPersona(${p.id})">
-        ✏️
-        </button>
+            <b>${p.nombre}</b>
 
-        <button onclick="eliminarPersona(${p.id})">
-        🗑
-        </button>
+
+            <button onclick="editarPersona(${p.id})">
+            ✏️
+            </button>
+
+
+            <button onclick="eliminarPersona(${p.id})">
+            🗑
+            </button>
+
 
         </div>
 
@@ -119,23 +132,29 @@ function mostrarPersonas(){
 
 
 
+// MOSTRAR TAREAS
+
 function mostrarTareas(){
 
-    listaTareas.innerHTML="";
+    listaTareas.innerHTML = "";
 
 
     tareas.forEach(t=>{
 
-        listaTareas.innerHTML+=`
+        listaTareas.innerHTML += `
 
         <div class="item"
         style="border-left:8px solid ${t.color}">
 
+
         <b>${t.nombre}</b><br>
+
 
         👤 ${t.persona}<br>
 
-        ${t.hecha ? "✅ Hecha":"⏳ Pendiente"}
+
+        ${t.hecha ? "✅ Hecha" : "⏳ Pendiente"}
+
 
         <br><br>
 
@@ -162,193 +181,3 @@ function mostrarTareas(){
     });
 
 }
-
-
-
-function editarPersona(id){
-
-    let persona=personas.find(p=>p.id===id);
-
-    let nuevo=prompt(
-        "Nuevo nombre:",
-        persona.nombre
-    );
-
-
-    if(nuevo){
-
-        persona.nombre=nuevo;
-
-
-        tareas.forEach(t=>{
-
-            if(t.persona===persona.nombre){
-                t.persona=nuevo;
-            }
-
-        });
-
-
-        guardar();
-        mostrarPersonas();
-        mostrarTareas();
-
-    }
-
-}
-
-
-
-function editarTarea(id){
-
-    let tarea=tareas.find(t=>t.id===id);
-
-
-    let nuevo=prompt(
-        "Nuevo nombre de tarea:",
-        tarea.nombre
-    );
-
-
-    if(nuevo){
-
-        tarea.nombre=nuevo;
-
-        guardar();
-        mostrarTareas();
-
-    }
-
-}
-
-
-
-function completar(id){
-
-    let tarea=tareas.find(t=>t.id===id);
-
-    tarea.hecha=!tarea.hecha;
-
-    guardar();
-    mostrarTareas();
-
-}
-
-
-
-function eliminarPersona(id){
-
-    if(confirm("¿Eliminar persona?")){
-
-        personas=personas.filter(p=>p.id!==id);
-
-        guardar();
-        mostrarPersonas();
-
-    }
-
-}
-
-
-
-function eliminarTarea(id){
-
-    if(confirm("¿Eliminar tarea?")){
-
-        tareas=tareas.filter(t=>t.id!==id);
-
-        guardar();
-        mostrarTareas();
-
-    }
-
-}
-
-
-
-function guardar(){
-
-localStorage.setItem(
-"personas",
-JSON.stringify(personas)
-);
-
-
-localStorage.setItem(
-"tareas",
-JSON.stringify(tareas)
-);
-
-}
-
-actualizarMes();
-
-
-function obtenerMes(){
-
-    let fecha = new Date();
-
-    return fecha.toLocaleDateString("es-ES", {
-        month:"long",
-        year:"numeric"
-    });
-
-}
-
-
-function actualizarMes(){
-
-    if(mostrarMes){
-
-        mostrarMes.innerHTML =
-        "📅 Mes actual: " + mesActual;
-
-    }
-
-}
-
-mostrarPersonas();
-mostrarTareas();
-document.getElementById("nuevoMes").onclick = function(){
-
-    if(tareas.length === 0){
-        alert("No hay tareas para copiar");
-        return;
-    }
-
-
-    let confirmar = confirm(
-        "¿Crear nuevo mes?\n\nLas tareas actuales se copiarán como pendientes."
-    );
-
-
-    if(confirmar){
-
-        tareas = tareas.map(t=>{
-
-            return {
-
-                id: Date.now() + Math.random(),
-
-                nombre:t.nombre,
-
-                persona:t.persona,
-
-                color:t.color,
-
-                hecha:false
-
-            };
-
-        });
-
-
-        guardar();
-        mostrarTareas();
-
-
-        alert("Nuevo mes creado correctamente");
-
-    }
-
-};
