@@ -339,6 +339,10 @@ function guardar(){
         "mesActual",
         mesActual
     );
+        localStorage.setItem(
+        "historial",
+        JSON.stringify(historial)
+    );
 
 }
 
